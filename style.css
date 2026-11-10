@@ -1,4 +1,3 @@
-
 /* GENERAL */
 * {
     margin: 0;
@@ -2204,7 +2203,7 @@ body.dark-mode .welcome-section {
 
 body.dark-mode .welcome-section h1,
 body.dark-mode .welcome-section p {
-    color: #F5EDF9 !important;
+    color: #30243E  !important;
 }
 
 
@@ -2431,4 +2430,87 @@ body.dark-mode .theme-toggle:hover {
         margin-bottom: 8px;
     }
 
+}
+
+
+.profile-icon {
+    width: 45px;
+    height: 45px;
+    background-color: #EBDCF7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+}
+
+
+/* ==================================
+   STUDYMATE LOGIN LOGO
+================================== */
+
+.logo-image {
+    width: 230px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* Logo and Website Name */
+.brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+
+/* ADJUST LOGIN BRAND SIZE */
+
+.brand-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+}
+
+/* Logo */
+.logo-image {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+}
+
+/* Website Name */
+.brand-text h1 {
+    font-size: 40px;
+    margin-bottom: 5px;
+}
+
+/* Slogan */
+.brand-text .slogan {
+    font-size: 17px;
+    margin-top: 5px;
+}
+
+/* Vertical Divider */
+.logo {
+    border-right: 2px solid #A879CC;
+    padding-right: 5px;
+}
+
+/* STUDYMATE NAVBAR LOGO */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #49256C !important;
+    font-weight: 700;
+}
+
+.navbar-logo {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
 }
