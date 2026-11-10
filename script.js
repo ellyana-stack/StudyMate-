@@ -1,4 +1,3 @@
-
 // ==========================================
 // STUDYMATE - COMPLETE JAVASCRIPT
 // ==========================================
@@ -56,46 +55,84 @@ function escapeHTML(value) {
 
 
 // ==========================================
-// 4. DEFAULT TASKS
+// 4. DEFAULT TASKS - 10 SAMPLE TASKS
 // ==========================================
 
 const defaultTasks = [
     {
         id: 1,
-        name: "Website Design Project",
+        name: "UI/UX Website Prototype",
         subject: "IMS566",
-        date: "2026-11-15",
-        status: "Pending"
+        date: "2026-11-08",
+        status: "Completed",
+        completedDate: "2026-11-08"
     },
     {
         id: 2,
-        name: "Research Report",
+        name: "Literature Review",
         subject: "IMS566",
+        date: "2026-11-03",
+        status: "Completed",
+        completedDate: "2026-11-08"
+    },
+    {
+        id: 3,
+        name: "IMC Campaign Presentation",
+        subject: "IMC",
+        date: "2026-11-09",
+        status: "Completed",
+        completedDate: "2026-11-09"
+    },
+    {
+        id: 4,
+        name: "Management Case Analysis",
+        subject: "Management",
+        date: "2026-11-06",
+        status: "Completed",
+        completedDate: "2026-11-07"
+    },
+    {
+        id: 5,
+        name: "Marketing Strategy Proposal",
+        subject: "Marketing",
+        date: "2026-11-15",
+        status: "In Progress"
+    },
+    {
+        id: 6,
+        name: "Business Report Draft",
+        subject: "Management",
         date: "2026-11-18",
         status: "In Progress"
     },
     {
-        id: 3,
-        name: "Group Presentation",
-        subject: "IMC",
+        id: 7,
+        name: "Database Normalization Exercise",
+        subject: "IMS566",
+        date: "2026-11-20",
+        status: "In Progress"
+    },
+    {
+        id: 8,
+        name: "English Reflection Journal",
+        subject: "English",
         date: "2026-11-22",
         status: "Pending"
     },
     {
-        id: 4,
-        name: "Case Study",
-        subject: "Management",
+        id: 9,
+        name: "Customer Behaviour Analysis",
+        subject: "Marketing",
         date: "2026-11-25",
-        status: "In Progress"
+        status: "Pending"
     },
     {
-        id: 5,
-        name: "Reflection Journal",
-        subject: "English",
+        id: 10,
+        name: "Final IMC Project Report",
+        subject: "IMC",
         date: "2026-11-28",
         status: "Pending"
     }
-    
 ];
 
 
@@ -106,14 +143,54 @@ const defaultTasks = [
 function getTasks() {
     const savedTasks = localStorage.getItem("myTasks");
 
+    // First time opening the website
     if (savedTasks === null) {
         localStorage.setItem("myTasks", JSON.stringify(defaultTasks));
+        localStorage.setItem("studyMateTaskSeedV2", "true");
+
         return [...defaultTasks];
     }
 
     try {
-        return JSON.parse(savedTasks) || [];
+        let tasks = JSON.parse(savedTasks);
+
+        if (!Array.isArray(tasks)) {
+            tasks = [];
+        }
+
+        // Add sample tasks once without deleting old tasks
+        if (localStorage.getItem("studyMateTaskSeedV2") !== "true") {
+
+            const existingNames = tasks.map(task =>
+                `${task.name}|${task.subject}`.toLowerCase()
+            );
+
+            let nextId = tasks.reduce((highest, task) => {
+                return Math.max(highest, Number(task.id) || 0);
+            }, 0) + 1;
+
+            defaultTasks.forEach(task => {
+                const taskKey =
+                    `${task.name}|${task.subject}`.toLowerCase();
+
+                if (!existingNames.includes(taskKey)) {
+                    tasks.push({
+                        ...task,
+                        id: nextId++
+                    });
+
+                    existingNames.push(taskKey);
+                }
+            });
+
+            localStorage.setItem("myTasks", JSON.stringify(tasks));
+            localStorage.setItem("studyMateTaskSeedV2", "true");
+        }
+
+        return tasks;
+
     } catch (error) {
+        console.error("Error loading tasks:", error);
         return [];
     }
 }
@@ -140,18 +217,17 @@ function displayTasks() {
     if (tasks.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center">
+                <td colspan="5" class="text-center">
                     No tasks available ♡
                 </td>
             </tr>
         `;
+
+        updateTaskSummary();
+        return;
     }
 
     tasks.forEach(task => {
-        const statusClass =
-            task.status === "Completed" ? "success" :
-            task.status === "In Progress" ? "warning" : "secondary";
-
         tableBody.innerHTML += `
             <tr>
                 <td>${escapeHTML(task.name)}</td>
@@ -161,17 +237,22 @@ function displayTasks() {
                 <td>
                     <select class="form-select form-select-sm task-status"
                         data-id="${task.id}">
-                        <option value="Pending" ${task.status === "Pending" ? "selected" : ""}>
+
+                        <option value="Pending"
+                            ${task.status === "Pending" ? "selected" : ""}>
                             Pending
                         </option>
 
-                        <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>
+                        <option value="In Progress"
+                            ${task.status === "In Progress" ? "selected" : ""}>
                             In Progress
                         </option>
 
-                        <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>
+                        <option value="Completed"
+                            ${task.status === "Completed" ? "selected" : ""}>
                             Completed
                         </option>
+
                     </select>
                 </td>
 
@@ -202,8 +283,14 @@ function updateTaskSummary() {
     const tasks = getTasks();
 
     const total = tasks.length;
-    const pending = tasks.filter(task => task.status === "Pending").length;
-    const progress = tasks.filter(task => task.status === "In Progress").length;
+
+    const pending = tasks.filter(
+        task => task.status === "Pending"
+    ).length;
+
+    const progress = tasks.filter(
+        task => task.status === "In Progress"
+    ).length;
 
     const totalElement = document.getElementById("totalTasks");
     const pendingElement = document.getElementById("pendingTasks");
@@ -236,7 +323,9 @@ function handleTaskForm(event) {
     const tasks = getTasks();
 
     if (id) {
-        const taskIndex = tasks.findIndex(task => String(task.id) === String(id));
+        const taskIndex = tasks.findIndex(
+            task => String(task.id) === String(id)
+        );
 
         if (taskIndex !== -1) {
             const oldTask = tasks[taskIndex];
@@ -247,14 +336,18 @@ function handleTaskForm(event) {
                 subject,
                 date,
                 status,
+
                 completedDate:
                     status === "Completed"
-                        ? (oldTask.status === "Completed"
-                            ? oldTask.completedDate || getTodayDate()
-                            : getTodayDate())
+                        ? (
+                            oldTask.status === "Completed"
+                                ? oldTask.completedDate || getTodayDate()
+                                : getTodayDate()
+                        )
                         : null
             };
         }
+
     } else {
         const newTask = {
             id: Date.now(),
@@ -262,7 +355,9 @@ function handleTaskForm(event) {
             subject,
             date,
             status,
-            completedDate: status === "Completed" ? getTodayDate() : null
+            completedDate: status === "Completed"
+                ? getTodayDate()
+                : null
         };
 
         tasks.push(newTask);
@@ -273,10 +368,12 @@ function handleTaskForm(event) {
     document.getElementById("addTaskForm").reset();
 
     const taskIdInput = document.getElementById("taskId");
-    if (taskIdInput) taskIdInput.value = "";
+
+    if (taskIdInput) {
+        taskIdInput.value = "";
+    }
 
     closeTaskModal();
-
     refreshAllPages();
 }
 
@@ -288,7 +385,9 @@ function handleTaskForm(event) {
 function editTask(id) {
     const tasks = getTasks();
 
-    const task = tasks.find(item => String(item.id) === String(id));
+    const task = tasks.find(
+        item => String(item.id) === String(id)
+    );
 
     if (!task) return;
 
@@ -317,11 +416,15 @@ function editTask(id) {
 // ==========================================
 
 function deleteTask(id) {
-    const confirmDelete = confirm("Are you sure you want to delete this task?");
+    const confirmDelete = confirm(
+        "Are you sure you want to delete this task?"
+    );
 
     if (!confirmDelete) return;
 
-    const tasks = getTasks().filter(task => String(task.id) !== String(id));
+    const tasks = getTasks().filter(
+        task => String(task.id) !== String(id)
+    );
 
     saveTasks(tasks);
 
@@ -357,7 +460,9 @@ function closeTaskModal() {
 function updateTaskStatus(id, newStatus) {
     const tasks = getTasks();
 
-    const task = tasks.find(item => String(item.id) === String(id));
+    const task = tasks.find(
+        item => String(item.id) === String(id)
+    );
 
     if (!task) return;
 
@@ -394,10 +499,12 @@ function filterTasks() {
         const subject = (task.subject || "").toLowerCase();
 
         const matchesSearch =
-            name.includes(searchText) || subject.includes(searchText);
+            name.includes(searchText) ||
+            subject.includes(searchText);
 
         const matchesStatus =
-            selectedStatus === "All" || task.status === selectedStatus;
+            selectedStatus === "All" ||
+            task.status === selectedStatus;
 
         return matchesSearch && matchesStatus;
     });
@@ -407,7 +514,7 @@ function filterTasks() {
     if (filteredTasks.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" class="text-center">
+                <td colspan="5" class="text-center">
                     No matching tasks found ♡
                 </td>
             </tr>
@@ -425,15 +532,22 @@ function filterTasks() {
                 <td>
                     <select class="form-select form-select-sm task-status"
                         data-id="${task.id}">
-                        <option value="Pending" ${task.status === "Pending" ? "selected" : ""}>
+
+                        <option value="Pending"
+                            ${task.status === "Pending" ? "selected" : ""}>
                             Pending
                         </option>
-                        <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>
+
+                        <option value="In Progress"
+                            ${task.status === "In Progress" ? "selected" : ""}>
                             In Progress
                         </option>
-                        <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>
+
+                        <option value="Completed"
+                            ${task.status === "Completed" ? "selected" : ""}>
                             Completed
                         </option>
+
                     </select>
                 </td>
 
@@ -512,9 +626,17 @@ function displayCompletedTasks() {
     const onTimeElement = document.getElementById("onTimeCount");
     const lateElement = document.getElementById("lateCount");
 
-    if (completedCount) completedCount.textContent = completedTasks.length;
-    if (onTimeElement) onTimeElement.textContent = onTimeCount;
-    if (lateElement) lateElement.textContent = lateCount;
+    if (completedCount) {
+        completedCount.textContent = completedTasks.length;
+    }
+
+    if (onTimeElement) {
+        onTimeElement.textContent = onTimeCount;
+    }
+
+    if (lateElement) {
+        lateElement.textContent = lateCount;
+    }
 }
 
 
@@ -530,8 +652,14 @@ function displayDashboard() {
     const tasks = getTasks();
 
     const total = tasks.length;
-    const completed = tasks.filter(task => task.status === "Completed").length;
-    const pending = tasks.filter(task => task.status !== "Completed").length;
+
+    const completed = tasks.filter(
+        task => task.status === "Completed"
+    ).length;
+
+    const pending = tasks.filter(
+        task => task.status !== "Completed"
+    ).length;
 
     const percentage = total === 0
         ? 0
@@ -543,8 +671,13 @@ function displayDashboard() {
     const pendingElement = document.getElementById("dashboardPending");
     const messageElement = document.getElementById("progressMessage");
 
-    if (completedElement) completedElement.textContent = completed;
-    if (pendingElement) pendingElement.textContent = pending;
+    if (completedElement) {
+        completedElement.textContent = completed;
+    }
+
+    if (pendingElement) {
+        pendingElement.textContent = pending;
+    }
 
     if (messageElement) {
         messageElement.textContent =
@@ -628,7 +761,8 @@ function displaySubjectChart() {
             ? task.subject.trim()
             : "Other";
 
-        subjectCounts[subject] = (subjectCounts[subject] || 0) + 1;
+        subjectCounts[subject] =
+            (subjectCounts[subject] || 0) + 1;
     });
 
     const subjects = Object.keys(subjectCounts);
@@ -675,9 +809,11 @@ function displaySubjectChart() {
             scales: {
                 y: {
                     beginAtZero: true,
+
                     ticks: {
                         stepSize: 1
                     },
+
                     title: {
                         display: true,
                         text: "Number of Tasks"
@@ -708,7 +844,10 @@ function displayUpcomingAssignments() {
     const today = getTodayDate();
 
     const upcomingTasks = getTasks()
-        .filter(task => task.status !== "Completed" && task.date >= today)
+        .filter(task =>
+            task.status !== "Completed" &&
+            task.date >= today
+        )
         .sort((a, b) => a.date.localeCompare(b.date))
         .slice(0, 3);
 
@@ -716,7 +855,9 @@ function displayUpcomingAssignments() {
 
     if (upcomingTasks.length === 0) {
         container.innerHTML = `
-            <p class="text-muted">No upcoming assignments. Enjoy your free time! ♡</p>
+            <p class="text-muted">
+                No upcoming assignments. Enjoy your free time! ♡
+            </p>
         `;
         return;
     }
@@ -730,7 +871,10 @@ function displayUpcomingAssignments() {
 
                 <div>
                     <h6>${escapeHTML(task.name)}</h6>
-                    <p>${escapeHTML(task.subject)} · Due ${formatDate(task.date)}</p>
+                    <p>
+                        ${escapeHTML(task.subject)}
+                        · Due ${formatDate(task.date)}
+                    </p>
                 </div>
             </div>
         `;
@@ -739,13 +883,110 @@ function displayUpcomingAssignments() {
 
 
 // ==========================================
-// 19. STUDY PLANNER - GET AND SAVE
+// 19. DEFAULT STUDY PLANS - 5 SAMPLE PLANS
+// ==========================================
+
+const defaultStudyPlans = [
+    {
+        id: 1,
+        subject: "IMS566",
+        topic: "HTML and CSS Revision",
+        date: "2026-11-11",
+        time: "09:00"
+    },
+    {
+        id: 2,
+        subject: "Marketing",
+        topic: "Review Marketing Concepts",
+        date: "2026-11-12",
+        time: "10:00"
+    },
+    {
+        id: 3,
+        subject: "Management",
+        topic: "Prepare Business Report",
+        date: "2026-11-13",
+        time: "14:00"
+    },
+    {
+        id: 4,
+        subject: "English",
+        topic: "Writing and Grammar Practice",
+        date: "2026-11-14",
+        time: "11:00"
+    },
+    {
+        id: 5,
+        subject: "IMC",
+        topic: "Group Presentation Practice",
+        date: "2026-11-15",
+        time: "15:00"
+    }
+];
+
+
+// ==========================================
+// 20. GET AND SAVE STUDY PLANS
 // ==========================================
 
 function getStudyPlans() {
+    const savedPlans = localStorage.getItem("studyPlans");
+
+    // First time opening Study Planner
+    if (savedPlans === null) {
+        localStorage.setItem(
+            "studyPlans",
+            JSON.stringify(defaultStudyPlans)
+        );
+
+        localStorage.setItem("studyMatePlannerSeedV1", "true");
+
+        return [...defaultStudyPlans];
+    }
+
     try {
-        return JSON.parse(localStorage.getItem("studyPlans")) || [];
+        let plans = JSON.parse(savedPlans);
+
+        if (!Array.isArray(plans)) {
+            plans = [];
+        }
+
+        // Add sample plans once without deleting old plans
+        if (localStorage.getItem("studyMatePlannerSeedV1") !== "true") {
+
+            const existingPlans = plans.map(plan =>
+                `${plan.subject}|${plan.topic}|${plan.date}|${plan.time}`
+                    .toLowerCase()
+            );
+
+            let nextId = plans.reduce((highest, plan) => {
+                return Math.max(highest, Number(plan.id) || 0);
+            }, 0) + 1;
+
+            defaultStudyPlans.forEach(plan => {
+                const planKey =
+                    `${plan.subject}|${plan.topic}|${plan.date}|${plan.time}`
+                        .toLowerCase();
+
+                if (!existingPlans.includes(planKey)) {
+                    plans.push({
+                        ...plan,
+                        id: nextId++
+                    });
+
+                    existingPlans.push(planKey);
+                }
+            });
+
+            localStorage.setItem("studyPlans", JSON.stringify(plans));
+
+            localStorage.setItem("studyMatePlannerSeedV1", "true");
+        }
+
+        return plans;
+
     } catch (error) {
+        console.error("Error loading study plans:", error);
         return [];
     }
 }
@@ -757,7 +998,7 @@ function saveStudyPlans(plans) {
 
 
 // ==========================================
-// 20. ADD STUDY PLAN
+// 21. ADD STUDY PLAN
 // ==========================================
 
 function handlePlannerForm(event) {
@@ -792,7 +1033,7 @@ function handlePlannerForm(event) {
 
 
 // ==========================================
-// 21. DISPLAY STUDY PLANS
+// 22. DISPLAY STUDY PLANS
 // ==========================================
 
 function displayStudyPlans() {
@@ -824,6 +1065,7 @@ function displayStudyPlans() {
                 <td>${escapeHTML(plan.topic)}</td>
                 <td>${formatDate(plan.date)}</td>
                 <td>${escapeHTML(plan.time)}</td>
+
                 <td>
                     <button class="btn btn-sm btn-outline-danger"
                         data-plan-delete="${plan.id}">
@@ -837,7 +1079,7 @@ function displayStudyPlans() {
 
 
 // ==========================================
-// 22. DELETE STUDY PLAN
+// 23. DELETE STUDY PLAN
 // ==========================================
 
 function deleteStudyPlan(id) {
@@ -856,7 +1098,7 @@ function deleteStudyPlan(id) {
 
 
 // ==========================================
-// 23. DISPLAY STUDY PLANNER ON DASHBOARD
+// 24. DISPLAY STUDY PLANNER ON DASHBOARD
 // ==========================================
 
 function displayDashboardStudyPlans() {
@@ -865,14 +1107,18 @@ function displayDashboardStudyPlans() {
     if (!container) return;
 
     const plans = getStudyPlans()
-        .sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time))
+        .sort((a, b) =>
+            (a.date + a.time).localeCompare(b.date + b.time)
+        )
         .slice(0, 3);
 
     container.innerHTML = "";
 
     if (plans.length === 0) {
         container.innerHTML = `
-            <p class="text-muted">No study plans available yet ♡</p>
+            <p class="text-muted">
+                No study plans available yet ♡
+            </p>
         `;
         return;
     }
@@ -884,7 +1130,12 @@ function displayDashboardStudyPlans() {
 
                 <div>
                     <h6>${escapeHTML(plan.topic)}</h6>
-                    <p>${escapeHTML(plan.subject)} · ${formatDate(plan.date)} · ${escapeHTML(plan.time)}</p>
+
+                    <p>
+                        ${escapeHTML(plan.subject)}
+                        · ${formatDate(plan.date)}
+                        · ${escapeHTML(plan.time)}
+                    </p>
                 </div>
             </div>
         `;
@@ -893,7 +1144,7 @@ function displayDashboardStudyPlans() {
 
 
 // ==========================================
-// 24. DARK MODE AND LIGHT MODE
+// 25. DARK MODE AND LIGHT MODE
 // ==========================================
 
 function applyTheme(theme) {
@@ -905,6 +1156,7 @@ function applyTheme(theme) {
         if (themeIcon) {
             themeIcon.textContent = "🌙";
         }
+
     } else {
         document.body.classList.remove("dark-mode");
 
@@ -916,9 +1168,11 @@ function applyTheme(theme) {
 
 
 function toggleTheme() {
-    const currentTheme = localStorage.getItem("studyMateTheme") || "light";
+    const currentTheme =
+        localStorage.getItem("studyMateTheme") || "light";
 
-    const newTheme = currentTheme === "light" ? "dark" : "light";
+    const newTheme =
+        currentTheme === "light" ? "dark" : "light";
 
     localStorage.setItem("studyMateTheme", newTheme);
 
@@ -927,7 +1181,7 @@ function toggleTheme() {
 
 
 // ==========================================
-// 25. REFRESH ALL PAGES
+// 26. REFRESH ALL PAGES
 // ==========================================
 
 function refreshAllPages() {
@@ -940,13 +1194,14 @@ function refreshAllPages() {
 
 
 // ==========================================
-// 26. INITIALIZE WEBSITE
+// 27. INITIALIZE WEBSITE
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", function () {
 
     // Display saved theme
-    const savedTheme = localStorage.getItem("studyMateTheme") || "light";
+    const savedTheme =
+        localStorage.getItem("studyMateTheme") || "light";
 
     applyTheme(savedTheme);
 
@@ -967,23 +1222,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Add task button resets the form
-    const addTaskButton = document.getElementById("addTaskButton");
+    // Add task button
+    // Supports both IDs used in the HTML versions
+    const addTaskButton =
+        document.getElementById("addTaskButton") ||
+        document.getElementById("openAddTaskButton");
 
     if (addTaskButton) {
         addTaskButton.addEventListener("click", function () {
+
             const form = document.getElementById("addTaskForm");
 
-            if (form) form.reset();
+            if (form) {
+                form.reset();
+            }
 
             const taskId = document.getElementById("taskId");
-            if (taskId) taskId.value = "";
 
-            const title = document.getElementById("addTaskModalTitle");
-            const saveButton = document.getElementById("saveTaskButton");
+            if (taskId) {
+                taskId.value = "";
+            }
 
-            if (title) title.textContent = "Add New Task ♡";
-            if (saveButton) saveButton.textContent = "Save Task";
+            const title =
+                document.getElementById("addTaskModalTitle");
+
+            const saveButton =
+                document.getElementById("saveTaskButton");
+
+            if (title) {
+                title.textContent = "Add New Task ♡";
+            }
+
+            if (saveButton) {
+                saveButton.textContent = "Save Task";
+            }
         });
     }
 
@@ -1004,7 +1276,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    // Task table buttons and status selection
+    // Task table buttons and study plan delete buttons
     document.addEventListener("click", function (event) {
 
         const actionButton = event.target.closest("[data-action]");
