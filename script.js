@@ -95,6 +95,13 @@ const defaultTasks = [
         date: "2026-11-28",
         status: "Pending"
     }
+    {
+        id: 6,
+        name: "Reflection Journal 2",
+        subject: "English",
+        date: "2026-10-11",
+        status: "Complete"
+    }
 ];
 
 
