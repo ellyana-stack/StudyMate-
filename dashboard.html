@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StudyMate | Dashboard</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dashboard-page">
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-lg-5">
+
+            <a class="navbar-brand" href="dashboard.html">
+                <span class="brand-icon">🎓</span>
+                <span class="brand-name">StudyMate</span>
+            </a>
+
+            <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarMenu">
+
+                <ul class="navbar-nav mx-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="dashboard.html">Dashboard</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="tasks.html">My Tasks</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="completed.html">Completed Tasks</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="planner.html">Study Planner</a>
+                    </li>
+
+                </ul>
+
+
+<!-- DARK MODE TOGGLE -->
+<button type="button" id="themeToggle"
+    class="theme-toggle"
+    aria-label="Toggle dark mode"
+    title="Change theme">
+
+    <span id="themeIcon">☀️</span>
+
+</button>
+
+
+                <!-- ADMIN PROFILE -->
+                <div class="admin-profile">
+
+                    <img src="admin2.jpeg" alt="Ellyana Profile">
+
+                    <div class="profile-info">
+                        <h6>Ellyana ♡</h6>
+                        <span>Admin</span>
+                    </div>
+
+                </div>
+
+                <a href="index.html" class="logout-button">
+                    Logout ↗
+                </a>
+
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- MAIN DASHBOARD -->
+    <main class="container-fluid dashboard-container px-lg-5">
+
+        <!-- WELCOME SECTION -->
+        <section class="welcome-section">
+
+            <div class="welcome-text">
+
+                <span class="welcome-label">
+                    ✨ YOUR PERSONAL STUDY SPACE
+                </span>
+
+                <h1>Hello, Ellyana! <span>♡</span></h1>
+
+                <p>
+                    Welcome back! Ready to make today productive?
+                    <br>
+                    Remember, small progress is still progress.
+                </p>
+
+                <div class="motivation-tag">
+                    🌷 You are doing amazing!
+                </div>
+
+            </div>
+
+            <div class="welcome-decoration">
+                <span class="decoration-star">✦</span>
+                <span class="decoration-heart">♡</span>
+                <span class="decoration-flower">🌸</span>
+                <span class="decoration-sparkle">✧</span>
+            </div>
+
+        </section>
+
+
+        <!-- STUDY OVERVIEW TITLE -->
+        <div class="section-heading">
+
+            <div>
+                <h2>Your Study Overview</h2>
+                <p>Let's see how your tasks are going today ♡</p>
+            </div>
+
+            <span class="heading-decoration">✿</span>
+
+        </div>
+
+
+        <!-- SUMMARY CARDS -->
+        <section class="row g-4 summary-section">
+
+            <!-- TOTAL TASKS -->
+            <div class="col-md-4">
+
+                <div class="summary-card total-card">
+
+                    <div class="summary-top">
+                        <div class="summary-icon">📚</div>
+                        <span class="summary-label">TOTAL TASKS</span>
+                    </div>
+
+                    <h2 id="dashboardTotal">0</h2>
+                    <p>All your study tasks</p>
+
+                    <span class="card-decoration">✦</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- COMPLETED TASKS -->
+            <div class="col-md-4">
+
+                <div class="summary-card completed-card">
+
+                    <div class="summary-top">
+                        <div class="summary-icon">🌷</div>
+                        <span class="summary-label">COMPLETED</span>
+                    </div>
+
+                    <h2 id="dashboardCompleted">0</h2>
+                    <p>Great job! Keep it up</p>
+
+                    <span class="card-decoration">♡</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- PENDING TASKS -->
+            <div class="col-md-4">
+
+                <div class="summary-card pending-card">
+
+                    <div class="summary-top">
+                        <div class="summary-icon">📝</div>
+                        <span class="summary-label">PENDING</span>
+                    </div>
+
+                    <h2 id="dashboardPending">0</h2>
+                    <p>Tasks not completed yet</p>
+
+                    <span class="card-decoration">✧</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TWO CHARTS SECTION -->
+        <section class="row g-4 content-section">
+
+            <!-- DOUGHNUT CHART -->
+            <div class="col-lg-5">
+
+                <div class="content-card chart-card">
+
+                    <div class="card-heading">
+
+                        <div>
+                            <h3>Task Progress</h3>
+                            <p>Your study progress at a glance</p>
+                        </div>
+
+                        <span class="cute-icon">💜</span>
+
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="taskChart"></canvas>
+                    </div>
+
+                    <div class="chart-legend">
+
+                        <div>
+                            <span class="legend-dot completed-dot"></span>
+                            Completed
+                        </div>
+
+                        <div>
+                            <span class="legend-dot pending-dot"></span>
+                            Not Completed
+                        </div>
+
+                    </div>
+
+                    <div class="progress-message" id="progressMessage">
+                        🌸 Keep going with your tasks!
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BAR CHART -->
+            <div class="col-lg-7">
+
+                <div class="content-card chart-card">
+
+                    <div class="card-heading">
+
+                        <div>
+                            <h3>Tasks by Subject</h3>
+                            <p>Number of tasks for each subject</p>
+                        </div>
+
+                        <span class="cute-icon">📊</span>
+
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="subjectChart"></canvas>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- UPCOMING ASSIGNMENTS -->
+        <section class="row g-4 content-section">
+
+            <div class="col-12">
+
+                <div class="content-card assignment-card">
+
+                    <div class="card-heading">
+
+                        <div>
+                            <h3>Upcoming Assignments</h3>
+                            <p>Don't forget your important deadlines!</p>
+                        </div>
+
+                        <span class="cute-icon">🎀</span>
+
+                    </div>
+
+                    <div id="upcomingAssignments">
+                        <!-- Upcoming tasks will appear here -->
+                    </div>
+
+                    <a href="tasks.html" class="view-tasks-link">
+                        View all tasks →
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STUDY PLANNER SUMMARY -->
+        <div class="card border-0 shadow-sm p-4 mt-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <h5 class="fw-bold mb-1" style="color:#49256C;">
+                        My Study Planner 📚
+                    </h5>
+
+                    <p class="text-muted mb-0">
+                        Your upcoming study schedule
+                    </p>
+                </div>
+
+                <a href="planner.html" class="btn btn-sm btn-outline-primary">
+                    View All
+                </a>
+
+            </div>
+
+            <div id="dashboardStudyPlans">
+                <!-- Study plans will appear here -->
+            </div>
+
+        </div>
+
+
+        <!-- STUDY MOTIVATION -->
+        <section class="bottom-message">
+
+            <span>🌷</span>
+
+            <div>
+                <h4>A little reminder for you</h4>
+
+                <p>
+                    Take a deep breath, stay focused and believe in yourself.
+                    You're doing better than you think! ♡
+                </p>
+            </div>
+
+            <span class="bottom-heart">💜</span>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer class="dashboard-footer">
+
+            <p>Made with ♡ by Ellyana | StudyMate © 2026</p>
+            <span>Your Study, Your Progress.</span>
+
+        </footer>
+
+    </main>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- StudyMate JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+</html>
